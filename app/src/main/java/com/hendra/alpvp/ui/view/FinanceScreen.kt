@@ -26,7 +26,7 @@ import com.hendra.alpvp.ui.viewmodel.FinanceViewModel
 import java.text.NumberFormat
 import java.util.Locale
 
-// --- COLORS ---
+// Colour
 private val BgDark = Color(0xFF1F1F1F)
 private val CardDark = Color(0xFF2C2C2E)
 private val TextWhite = Color(0xFFFFFFFF)
@@ -39,10 +39,7 @@ fun FinanceScreen(
     onBackClick: () -> Unit,
     viewModel: FinanceViewModel = viewModel(factory = FinanceViewModel.Factory)
 ) {
-    // Ambil data transaksi dari ViewModel
     val transactions by viewModel.transactions.collectAsState()
-
-    // Load data setiap kali layar dibuka agar selalu fresh
     LaunchedEffect(true) { viewModel.loadData() }
 
     FinanceScreenContent(
@@ -63,7 +60,7 @@ fun FinanceScreenContent(
 ) {
     var showDialog by remember { mutableStateOf(false) }
 
-    // Hitung Total Saldo
+    // Hitung Saldo
     val totalIncome = transactions.filter { it.type == "INCOME" }.sumOf { it.amount }
     val totalExpense = transactions.filter { it.type == "EXPENSE" }.sumOf { it.amount }
     val balance = totalIncome - totalExpense
@@ -97,7 +94,6 @@ fun FinanceScreenContent(
                 .fillMaxSize()
                 .padding(horizontal = 20.dp)
         ) {
-            // --- 1. SUMMARY CARD ---
             Card(
                 shape = RoundedCornerShape(24.dp),
                 colors = CardDefaults.cardColors(containerColor = CardDark),
@@ -137,19 +133,16 @@ fun FinanceScreenContent(
             Text("Recent Transactions", color = TextWhite, fontWeight = FontWeight.Bold, fontSize = 18.sp)
             Spacer(modifier = Modifier.height(12.dp))
 
-            // --- 2. LIST TRANSAKSI (DIBALIK AGAR TERBARU DI ATAS) ---
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
-                // PERUBAHAN UTAMA DI SINI: .reversed()
                 items(transactions.reversed()) { trx ->
                     TransactionItemCard(trx)
                 }
             }
         }
 
-        // --- DIALOG INPUT TRANSAKSI ---
         if (showDialog) {
             AddTransactionDialog(
                 onDismiss = { showDialog = false },
@@ -176,7 +169,6 @@ fun TransactionItemCard(trx: TransactionResponse) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                // Icon Bulat
                 Box(
                     modifier = Modifier
                         .size(40.dp)
@@ -192,16 +184,12 @@ fun TransactionItemCard(trx: TransactionResponse) {
                     )
                 }
                 Spacer(modifier = Modifier.width(16.dp))
-
-                // Detail Text
                 Column {
                     Text(trx.category, color = TextWhite, fontWeight = FontWeight.SemiBold)
-                    // Menampilkan tanggal pendek (YYYY-MM-DD)
                     val displayDate = if (trx.date.length >= 10) trx.date.substring(0, 10) else trx.date
                     Text(displayDate, color = TextGray, fontSize = 12.sp)
                 }
             }
-            // Nominal
             Text(
                 text = (if (isIncome) "+ " else "- ") + formatRupiah(trx.amount),
                 color = if (isIncome) GreenIncome else RedExpense,
@@ -219,7 +207,7 @@ fun AddTransactionDialog(
 ) {
     var amountStr by remember { mutableStateOf("") }
     var category by remember { mutableStateOf("") }
-    var type by remember { mutableStateOf("EXPENSE") } // Default Pengeluaran
+    var type by remember { mutableStateOf("EXPENSE") }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -227,7 +215,6 @@ fun AddTransactionDialog(
         title = { Text("Tambah Transaksi", color = TextWhite) },
         text = {
             Column {
-                // Pilihan Tipe (Income / Expense)
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                     FilterChip(
                         selected = type == "INCOME",
@@ -255,7 +242,6 @@ fun AddTransactionDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Input Nominal
                 OutlinedTextField(
                     value = amountStr,
                     onValueChange = { if (it.all { char -> char.isDigit() }) amountStr = it },
@@ -274,7 +260,6 @@ fun AddTransactionDialog(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Input Kategori
                 OutlinedTextField(
                     value = category,
                     onValueChange = { category = it },
@@ -314,7 +299,6 @@ fun formatRupiah(amount: Double): String {
     return format.format(amount).replace("Rp", "Rp ").replace(",00", "")
 }
 
-// --- PREVIEW ---
 @Preview(showBackground = true)
 @Composable
 fun FinanceScreenPreview() {

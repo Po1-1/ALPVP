@@ -1,7 +1,7 @@
 package com.hendra.alpvp.data.service
 
 import com.hendra.alpvp.ui.model.WebResponse
-import com.hendra.alpvp.ui.model.* // Pastikan model diimport
+import com.hendra.alpvp.ui.model.*
 import retrofit2.Response
 import retrofit2.http.*
 
