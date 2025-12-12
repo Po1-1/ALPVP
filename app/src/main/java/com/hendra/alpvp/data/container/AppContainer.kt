@@ -33,5 +33,6 @@ class AppContainer(private val context: Context) {
         .build()
 
     val apiService: ApiService by lazy { retrofit.create(ApiService::class.java) }
+    val authRepository by lazy { AuthRepository(apiService) }
     val financeRepository by lazy { FinanceRepository(apiService) }
 }
