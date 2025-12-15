@@ -1,6 +1,7 @@
 package com.hendra.alpvp.ui.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,7 +29,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.hendra.alpvp.Greeting
 import com.hendra.alpvp.ui.theme.ALPVPTheme
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
@@ -39,7 +39,8 @@ import java.util.Locale
 
 @Composable
 fun CalendarView(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onDateClick: (LocalDate) -> Unit = {}
 ) {
     // Start from current month
     val currentData = remember { LocalDate.now() }
@@ -120,17 +121,13 @@ fun CalendarView(
             modifier = Modifier.fillMaxWidth()
         ) { page ->
             val month = initialMonth.plusMonths((page - initialPage).toLong())
-            MonthView(month)
+            MonthView(month, onDateClick)
         }
-
-        Text("Your Events")
-
-
     }
 }
 
 @Composable
-fun MonthView(yearMonth: YearMonth) {
+fun MonthView(yearMonth: YearMonth, onDateClick: (LocalDate) -> Unit) {
     val daysInMonth = yearMonth.lengthOfMonth()
     val firstDayOfMonth = yearMonth.atDay(1)
     val startOffset = firstDayOfMonth.dayOfWeek.value % 7
@@ -153,7 +150,11 @@ fun MonthView(yearMonth: YearMonth) {
                             .clip(RoundedCornerShape(6.dp))
                             .then(
                                 if (dayOfMonth in 1..daysInMonth) {
-                                    Modifier.background(Color(0xFF4B4B4B))
+                                    Modifier
+                                        .background(Color(0xFF4B4B4B))
+                                        .clickable {
+                                            onDateClick(yearMonth.atDay(dayOfMonth))
+                                        }
                                 } else {
                                     Modifier
                                 }
