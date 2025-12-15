@@ -19,4 +19,11 @@ interface ApiService {
 
     @GET("api/finance")
     suspend fun getTransactions(): Response<WebResponse<List<TransactionResponse>>>
+
+    // Alarm
+    @GET("api/alarm")
+    suspend fun getAlarm(): Response<WebResponse<AlarmResposne>>
+
+    @POST("api/alarm")
+    suspend fun createAlarm(@Body request: AlarmRequest): Response<WebResponse<AlarmResposne>>
 }
