@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 
     <application
+        android:name=".MomentumApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -22,8 +23,6 @@
         android:theme="@style/Theme.ALPVP"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-        >
-
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -35,6 +34,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.view.QuestActivity"
+            android:exported="false"
+            android:showOnLockScreen="true"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.ALPVP" />
+
+        <receiver
+            android:name=".data.service.AlarmReceiver"
+            android:exported="false" />
+
+        <service
+            android:name=".data.service.AlarmSoundService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
+
 
 
 

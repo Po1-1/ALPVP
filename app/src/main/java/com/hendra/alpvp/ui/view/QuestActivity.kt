@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.hendra.alpvp.data.service.AlarmSoundService
-import com.hendra.alpvp.ui.theme.NEWALPVPTheme
+import com.hendra.alpvp.ui.theme.ALPVPTheme
 import com.hendra.alpvp.ui.viewmodel.QuestState
 import com.hendra.alpvp.ui.viewmodel.QuestViewModel
 
@@ -39,10 +39,9 @@ class QuestActivity : ComponentActivity() {
         showOnLockScreen()
         super.onCreate(savedInstanceState)
         setContent {
-            NEWALPVPTheme {
+            ALPVPTheme {
                 QuestScreen(
                     onSuccess = {
-                        // Matikan Service Suara
                         stopService(Intent(this, AlarmSoundService::class.java))
                         finish()
                     }
@@ -72,7 +71,7 @@ class QuestActivity : ComponentActivity() {
 @Composable
 fun QuestScreen(
     onSuccess: () -> Unit,
-    viewModel: QuestViewModel = viewModel(factory = QuestViewModel.Factory)
+    viewModel: QuestViewModel = viewModel(factory = QuestViewModel .Factory)
 ) {
     val state by viewModel.uiState.collectAsState()
 
@@ -250,10 +249,8 @@ fun QuestScreenPreview() {
         userAnswer = ""
     )
 
-    NEWALPVPTheme {
+    ALPVPTheme {
         Scaffold(containerColor = Color(0xFF1C1C1E)) { padding ->
-            // Copy paste sebagian kecil struktur QuestScreen manual untuk preview static
-            // Karena kita tidak bisa inject ViewModel di preview, kita buat dummy UI
             Column(
                 modifier = Modifier.padding(padding).fillMaxSize().padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
