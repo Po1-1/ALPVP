@@ -9,7 +9,7 @@ data class AlarmRequest(
 
 data class ToggleAlarmRequest(val isActive: Boolean)
 
-data class AlarmResposne(
+data class AlarmResponse(
     val id: String,
     val time: String,
     val label: String,

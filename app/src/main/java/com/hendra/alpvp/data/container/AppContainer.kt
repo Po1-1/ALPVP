@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit
 
 class AppContainer(private val context: Context) {
     private val BASE_URL = "http://10.0.2.2:3000/"
+
     private val client = OkHttpClient.Builder()
         .addInterceptor(HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
@@ -33,6 +34,9 @@ class AppContainer(private val context: Context) {
         .build()
 
     val apiService: ApiService by lazy { retrofit.create(ApiService::class.java) }
+
     val authRepository by lazy { AuthRepository(apiService) }
     val financeRepository by lazy { FinanceRepository(apiService) }
+    val sleepRepository by lazy { SleepRepository(apiService) }
+    val weatherRepository by lazy { WeatherRepository(apiService) }
 }
