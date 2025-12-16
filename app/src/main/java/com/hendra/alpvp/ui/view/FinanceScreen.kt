@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hendra.alpvp.ui.model.TransactionResponse
+import com.hendra.alpvp.ui.viewmodel.FinanceUiState
 import com.hendra.alpvp.ui.viewmodel.FinanceViewModel
 import java.text.NumberFormat
 import java.util.Locale
@@ -39,11 +40,13 @@ fun FinanceScreen(
     onBackClick: () -> Unit,
     viewModel: FinanceViewModel = viewModel(factory = FinanceViewModel.Factory)
 ) {
-    val transactions by viewModel.transactions.collectAsState()
+    // 1. Mengambil seluruh state dari ViewModel
+    val uiState by viewModel.uiState.collectAsState()
+
     LaunchedEffect(true) { viewModel.loadData() }
 
     FinanceScreenContent(
-        transactions = transactions,
+        uiState = uiState, // Pass state object
         onBackClick = onBackClick,
         onAddTransaction = { type, amount, category ->
             viewModel.createTransaction(type, amount, category)
@@ -54,16 +57,13 @@ fun FinanceScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FinanceScreenContent(
-    transactions: List<TransactionResponse>,
+    uiState: FinanceUiState, // Menerima UiState yang sudah matang
     onBackClick: () -> Unit,
     onAddTransaction: (String, Double, String) -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
 
-    // Hitung Saldo
-    val totalIncome = transactions.filter { it.type == "INCOME" }.sumOf { it.amount }
-    val totalExpense = transactions.filter { it.type == "EXPENSE" }.sumOf { it.amount }
-    val balance = totalIncome - totalExpense
+    // Logika perhitungan dihapus dari sini karena sudah ada di ViewModel
 
     Scaffold(
         containerColor = BgDark,
@@ -94,6 +94,11 @@ fun FinanceScreenContent(
                 .fillMaxSize()
                 .padding(horizontal = 20.dp)
         ) {
+            // Loading Indicator (Opsional, agar user tau sedang loading)
+            if (uiState.isLoading) {
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth(), color = GreenIncome)
+            }
+
             Card(
                 shape = RoundedCornerShape(24.dp),
                 colors = CardDefaults.cardColors(containerColor = CardDark),
@@ -106,7 +111,8 @@ fun FinanceScreenContent(
                     Text("Total Balance", color = TextGray, fontSize = 14.sp)
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = formatRupiah(balance),
+                        // Menggunakan data langsung dari uiState
+                        text = formatRupiah(uiState.balance),
                         color = TextWhite,
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Bold
@@ -120,11 +126,11 @@ fun FinanceScreenContent(
                     ) {
                         Column {
                             Text("Income", color = TextWhite, fontSize = 14.sp)
-                            Text(formatRupiah(totalIncome), color = GreenIncome, fontWeight = FontWeight.Bold)
+                            Text(formatRupiah(uiState.totalIncome), color = GreenIncome, fontWeight = FontWeight.Bold)
                         }
                         Column(horizontalAlignment = Alignment.End) {
                             Text("Expenses", color = TextWhite, fontSize = 14.sp)
-                            Text(formatRupiah(totalExpense), color = RedExpense, fontWeight = FontWeight.Bold)
+                            Text(formatRupiah(uiState.totalExpense), color = RedExpense, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -137,7 +143,8 @@ fun FinanceScreenContent(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(transactions.reversed()) { trx ->
+                // Mengambil list transaksi dari uiState
+                items(uiState.transactions.reversed()) { trx ->
                     TransactionItemCard(trx)
                 }
             }
@@ -154,6 +161,8 @@ fun FinanceScreenContent(
         }
     }
 }
+
+// ... (Bagian TransactionItemCard, AddTransactionDialog, dan formatRupiah tetap sama seperti kode awal Anda)
 
 @Composable
 fun TransactionItemCard(trx: TransactionResponse) {
@@ -302,11 +311,17 @@ fun formatRupiah(amount: Double): String {
 @Preview(showBackground = true)
 @Composable
 fun FinanceScreenPreview() {
+    // Preview menggunakan dummy UiState
     FinanceScreenContent(
-        transactions = listOf(
-            TransactionResponse("1", "INCOME", 5000000.0, "Gaji Bulanan", "2023-10-01", "u1"),
-            TransactionResponse("2", "EXPENSE", 50000.0, "Makan Siang", "2023-10-02", "u1"),
-            TransactionResponse("3", "EXPENSE", 200000.0, "Bensin", "2023-10-03", "u1")
+        uiState = FinanceUiState(
+            transactions = listOf(
+                TransactionResponse("1", "INCOME", 5000000.0, "Gaji Bulanan", "2023-10-01", "u1"),
+                TransactionResponse("2", "EXPENSE", 50000.0, "Makan Siang", "2023-10-02", "u1"),
+                TransactionResponse("3", "EXPENSE", 200000.0, "Bensin", "2023-10-03", "u1")
+            ),
+            totalIncome = 5000000.0,
+            totalExpense = 250000.0,
+            balance = 4750000.0
         ),
         onBackClick = {},
         onAddTransaction = { _, _, _ -> }
