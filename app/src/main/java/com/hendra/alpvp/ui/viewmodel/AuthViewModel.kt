@@ -60,6 +60,7 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
         _uiState.value = AuthUiState.Idle
     }
 
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {

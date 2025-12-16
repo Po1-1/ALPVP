@@ -18,6 +18,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             ALPVPTheme {
                 MomentumApp()
+                ALPVPTheme {
+                    MomentumApp()
+                }
             }
         }
     }

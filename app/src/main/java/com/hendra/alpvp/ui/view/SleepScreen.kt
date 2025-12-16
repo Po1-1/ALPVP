@@ -356,7 +356,6 @@ fun AddAlarmSheetContent(
             }
         }
     }
-}
 
 @Preview(showBackground = true)
 @Composable
@@ -374,4 +373,7 @@ fun SleepScreenPreview() {
         onToggleAlarm = { _, _ -> },
         onDeleteAlarm = {}
     )
+
+fun SleepScreenPreview(){
+    SleepScreen()
 }
