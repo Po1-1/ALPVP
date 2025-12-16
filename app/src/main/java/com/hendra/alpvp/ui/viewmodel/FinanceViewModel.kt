@@ -2,13 +2,13 @@ package com.hendra.alpvp.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import androidx.lifecycle.viewModelScope
 import com.hendra.alpvp.MomentumApplication
 import com.hendra.alpvp.data.repository.FinanceRepository
+import com.hendra.alpvp.ui.model.FinanceUiState
 import com.hendra.alpvp.ui.model.TransactionRequest
-import com.hendra.alpvp.ui.model.TransactionResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -17,18 +17,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-// 1. Membuat Data Class untuk menampung State UI
-data class FinanceUiState(
-    val transactions: List<TransactionResponse> = emptyList(),
-    val totalIncome: Double = 0.0,
-    val totalExpense: Double = 0.0,
-    val balance: Double = 0.0,
-    val isLoading: Boolean = false
-)
 
 class FinanceViewModel(private val repository: FinanceRepository) : ViewModel() {
-
-    // 2. Menggunakan UiState alih-alih list mentah
     private val _uiState = MutableStateFlow(FinanceUiState())
     val uiState = _uiState.asStateFlow()
 

@@ -40,7 +40,6 @@ fun FinanceScreen(
     onBackClick: () -> Unit,
     viewModel: FinanceViewModel = viewModel(factory = FinanceViewModel.Factory)
 ) {
-    // 1. Mengambil seluruh state dari ViewModel
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(true) { viewModel.loadData() }
@@ -57,13 +56,12 @@ fun FinanceScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FinanceScreenContent(
-    uiState: FinanceUiState, // Menerima UiState yang sudah matang
+    uiState: FinanceUiState,
     onBackClick: () -> Unit,
     onAddTransaction: (String, Double, String) -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
 
-    // Logika perhitungan dihapus dari sini karena sudah ada di ViewModel
 
     Scaffold(
         containerColor = BgDark,
@@ -143,7 +141,6 @@ fun FinanceScreenContent(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
-                // Mengambil list transaksi dari uiState
                 items(uiState.transactions.reversed()) { trx ->
                     TransactionItemCard(trx)
                 }
@@ -161,8 +158,6 @@ fun FinanceScreenContent(
         }
     }
 }
-
-// ... (Bagian TransactionItemCard, AddTransactionDialog, dan formatRupiah tetap sama seperti kode awal Anda)
 
 @Composable
 fun TransactionItemCard(trx: TransactionResponse) {
@@ -311,7 +306,6 @@ fun formatRupiah(amount: Double): String {
 @Preview(showBackground = true)
 @Composable
 fun FinanceScreenPreview() {
-    // Preview menggunakan dummy UiState
     FinanceScreenContent(
         uiState = FinanceUiState(
             transactions = listOf(
