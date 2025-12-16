@@ -32,8 +32,6 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
         viewModelScope.launch {
             repository.login(LoginRequest(email, pass)).fold(
                 onSuccess = { response ->
-                    // PERBAIKAN: Ambil token dari response.data.token
-                    // it/response adalah WebResponse -> data adalah UserResponse -> token ada di sana
                     TokenManager.saveToken(context, response.data.token ?: "")
                     _uiState.value = AuthUiState.Success
                 },
@@ -56,6 +54,10 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
                 }
             )
         }
+    }
+
+    fun resetState() {
+        _uiState.value = AuthUiState.Idle
     }
 
 
