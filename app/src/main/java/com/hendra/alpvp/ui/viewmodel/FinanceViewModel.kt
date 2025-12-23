@@ -32,13 +32,14 @@ class FinanceViewModel(private val repository: FinanceRepository) : ViewModel() 
 
     fun createTransaction(type: String, amount: Double, category: String) {
         viewModelScope.launch {
+            // Format tanggal saat ini ke string (sesuai kebutuhan backend, biasanya ISO atau yyyy-MM-dd)
             val currentDate = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US).format(
                 Date()
             )
 
             val req = TransactionRequest(type, amount, category, currentDate)
             repository.createTransaction(req).onSuccess {
-                loadData()
+                loadData() // PENTING: Refresh data setelah sukses tambah
             }
         }
     }

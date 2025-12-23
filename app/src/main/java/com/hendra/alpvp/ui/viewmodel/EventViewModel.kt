@@ -5,63 +5,85 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.lifecycle.viewModelScope
+
 import com.hendra.alpvp.MomentumApplication
 import com.hendra.alpvp.data.repository.EventRepository
 import com.hendra.alpvp.ui.model.EventRequest
+import com.hendra.alpvp.ui.model.EventResponse
+import com.hendra.alpvp.ui.model.WebResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 class EventViewModel(
     private val repository: EventRepository
 ) : ViewModel() {
 
-    // ===== STATE =====
     private val _eventsState = MutableStateFlow<Any?>(null)
     val eventsState: StateFlow<Any?> = _eventsState
-
-    private val _eventDetailState = MutableStateFlow<Any?>(null)
-    val eventDetailState: StateFlow<Any?> = _eventDetailState
 
     private val _actionState = MutableStateFlow<Any?>(null)
     val actionState: StateFlow<Any?> = _actionState
 
-    // ===== GET ALL EVENTS =====
     fun getAllEvents() {
         viewModelScope.launch {
             _eventsState.value = repository.getAllEvents()
         }
     }
 
-    // ===== GET EVENT BY ID =====
-    fun getEvent(id: Int) {
-        viewModelScope.launch {
-            _eventDetailState.value = repository.getEvent(id)
-        }
-    }
-
-    // ===== CREATE EVENT =====
     fun createEvent(request: EventRequest) {
         viewModelScope.launch {
-            _actionState.value = repository.createEvent(request)
+            val result = repository.createEvent(request)
+            _actionState.value = result
+            if (result.isSuccess) {
+                getAllEvents() // Automatically refresh on success
+            }
         }
     }
 
-    // ===== UPDATE EVENT =====
     fun updateEvent(eventId: Int, request: EventRequest) {
         viewModelScope.launch {
-            _actionState.value = repository.updateEvent(eventId, request)
+            val result = repository.updateEvent(eventId, request)
+            _actionState.value = result
+            if (result.isSuccess) {
+                getAllEvents() // Automatically refresh on success
+            }
         }
     }
 
-    // ===== DELETE EVENT =====
     fun deleteEvent(eventId: Int) {
         viewModelScope.launch {
-            _actionState.value = repository.deleteEvent(eventId)
+            val result = repository.deleteEvent(eventId)
+            _actionState.value = result
+            if (result.isSuccess) {
+                getAllEvents() // Automatically refresh on success
+            }
         }
     }
 
-    // ===== RESET STATE (optional) =====
+    fun getEventsForDate(date: LocalDate): List<EventResponse> {
+        val state = _eventsState.value
+        if (state is Result<*>) {
+            return try {
+                @Suppress("UNCHECKED_CAST")
+                val webResponse = state.getOrNull() as? WebResponse<List<EventResponse>>
+                val allEvents = webResponse?.data ?: emptyList()
+                allEvents.filter {
+                    try {
+                        val eventDate = LocalDate.parse(it.date.take(10))
+                        eventDate.isEqual(date)
+                    } catch (e: Exception) {
+                        false
+                    }
+                }
+            } catch (e: Exception) {
+                emptyList()
+            }
+        }
+        return emptyList()
+    }
+
     fun clearActionState() {
         _actionState.value = null
     }

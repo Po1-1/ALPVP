@@ -50,7 +50,7 @@ class AppContainer(private val context: Context) {
     val authRepository by lazy { AuthRepository(apiService) }
     val financeRepository by lazy { FinanceRepository(apiService) }
     val eventRepository by lazy { EventRepository(apiService) }
-//    val todoRepository by lazy { TodoRepository(apiService) }
-//    val sleepRepository by lazy { SleepRepository(apiService) }
-//    val weatherRepository by lazy { WeatherRepository(apiService) }
+    val todoRepository by lazy { TodoRepository(apiService) }
+    val sleepRepository by lazy { SleepRepository(apiService) }
+    val weatherRepository by lazy { WeatherRepository(apiService) }
 }
