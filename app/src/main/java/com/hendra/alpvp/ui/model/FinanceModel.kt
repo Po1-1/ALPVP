@@ -14,3 +14,11 @@ data class TransactionResponse(
     val date: String,
     val userId: String
 )
+
+data class FinanceUiState(
+    val transactions: List<TransactionResponse> = emptyList(),
+    val totalIncome: Double = 0.0,
+    val totalExpense: Double = 0.0,
+    val balance: Double = 0.0,
+    val isLoading: Boolean = false
+)

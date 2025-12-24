@@ -6,7 +6,6 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.lifecycle.viewModelScope
 import com.hendra.alpvp.MomentumApplication
-import com.hendra.alpvp.data.container.AppContainer
 import com.hendra.alpvp.data.repository.WeatherRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

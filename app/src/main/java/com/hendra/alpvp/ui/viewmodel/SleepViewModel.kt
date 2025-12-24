@@ -40,8 +40,6 @@ class SleepViewModel(private val repository: SleepRepository) : ViewModel() {
     fun addAlarm(context: Context, hour: Int, minute: Int, label: String, days: List<Boolean>) {
         val timeString = String.format("%02d:%02d", hour, minute)
         viewModelScope.launch {
-            // Asumsi repository Anda menerima List<Boolean> atau Anda convert dulu di sini
-            // Jika repository butuh string, convert dulu days nya.
             repository.createAlarm(timeString, label, days).onSuccess { response ->
                 val newAlarm = response.data
                 loadData()
@@ -83,38 +81,6 @@ class SleepViewModel(private val repository: SleepRepository) : ViewModel() {
         }
     }
 
-    // ==========================================
-    // ✅ HELPER UI (Pindahan dari Model)
-    // ==========================================
-
-    // UI akan memanggil ini: viewModel.formatAlarmDays(alarm.days)
-    fun formatAlarmDays(days: List<Boolean>): String {
-        // Logika asli Anda
-        val daysName = listOf("M", "S", "S", "R", "K", "J", "S") // Minggu, Senin, dst
-
-        // Pastikan size list days sama dengan daysName untuk menghindari error IndexOutOfBounds
-        if (days.size != daysName.size) return "Format Hari Salah"
-
-        val activeDays = days.mapIndexed { i, active ->
-            if (active) daysName[i] else null
-        }.filterNotNull()
-
-        return when {
-            activeDays.isEmpty() -> "Sekali"
-            activeDays.size == 7 -> "Setiap Hari"
-            else -> activeDays.joinToString(" ")
-        }
-    }
-
-    // Helper simple untuk waktu (opsional, krn di model cuma return time)
-    fun formatAlarmTime(time: String): String {
-        return time
-    }
-
-    // ==========================================
-    // ⏰ LOGIKA SYSTEM ALARM
-    // ==========================================
-
     private fun scheduleSystemAlarm(context: Context, hour: Int, minute: Int, days: List<Boolean>, requestCode: Int) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -125,7 +91,7 @@ class SleepViewModel(private val repository: SleepRepository) : ViewModel() {
             }
         }
 
-        val triggerTime = calculateNextAlarmTime(hour, minute, days)
+        val triggerTime = calculateNextAlarmTime(hour, minute, days) // Hitung kapan alarm bunyi
 
         val intent = Intent(context, AlarmReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
@@ -151,7 +117,7 @@ class SleepViewModel(private val repository: SleepRepository) : ViewModel() {
         try {
             val intent = Intent(context, AlarmReceiver::class.java)
             val pendingIntent = PendingIntent.getBroadcast(
-                context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE /
             )
             val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             am.cancel(pendingIntent)

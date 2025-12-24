@@ -12,11 +12,13 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.hendra.alpvp.data.container.TokenManager
-import com.hendra.alpvp.ui.view.DashboardScreen
-import com.hendra.alpvp.ui.view.LoginScreen
-import com.hendra.alpvp.ui.view.RegisterScreen
-import com.hendra.alpvp.ui.view.SleepScreen
+import com.hendra.newalpvp.ui.container.TokenManager
+import com.hendra.newalpvp.ui.view.DashboardScreen
+import com.hendra.newalpvp.ui.view.FinanceScreen
+import com.hendra.newalpvp.ui.view.LoginScreen
+import com.hendra.newalpvp.ui.view.RegisterScreen
+import com.hendra.newalpvp.ui.view.SleepScreen
+import com.hendra.newalpvp.ui.view.TodoScreen
 
 @Composable
 fun MomentumApp() {
@@ -82,6 +84,14 @@ fun MomentumApp() {
                     }
                 }
             )
+        }
+
+        composable("finance") {
+            FinanceScreen(onBackClick = { navController.popBackStack() })
+        }
+
+        composable("todo") {
+            TodoScreen(onBackClick = { navController.popBackStack() })
         }
 
         composable("sleep") {

@@ -37,5 +37,4 @@ interface ApiService {
     suspend fun getCurrentWeather(
         @Url url: String
     ): Response<WeatherResponse>
-
 }
