@@ -12,8 +12,9 @@ import com.hendra.alpvp.R
 import com.hendra.alpvp.ui.view.QuestActivity
 
 class AlarmReceiver : BroadcastReceiver() {
-    override fun onReceive(context: Context, intent: Intent) { // Jalan detik itu
-        // Nyalakan Service Suara
+    override fun onReceive(context: Context, intent: Intent) {
+
+        // 1. Nyalakan Service Suara (Biar Berisik terus menerus sampai dimatikan)
         val serviceIntent = Intent(context, AlarmSoundService::class.java)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.startForegroundService(serviceIntent)
@@ -21,7 +22,7 @@ class AlarmReceiver : BroadcastReceiver() {
             context.startService(serviceIntent)
         }
 
-        // Tampilkan Notifikasi
+        // 2. Tampilkan Notifikasi Full Screen (QuestActivity)
         showAlarmNotification(context)
     }
 
