@@ -12,27 +12,27 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.hendra.newalpvp.ui.container.TokenManager
-import com.hendra.newalpvp.ui.view.DashboardScreen
-import com.hendra.newalpvp.ui.view.FinanceScreen
-import com.hendra.newalpvp.ui.view.LoginScreen
-import com.hendra.newalpvp.ui.view.RegisterScreen
-import com.hendra.newalpvp.ui.view.SleepScreen
-import com.hendra.newalpvp.ui.view.TodoScreen
+import com.hendra.alpvp.data.container.TokenManager
+import com.hendra.alpvp.ui.view.CalendarView
+import com.hendra.alpvp.ui.view.DashboardScreen
+import com.hendra.alpvp.ui.view.FinanceScreen
+import com.hendra.alpvp.ui.view.LoginScreen
+import com.hendra.alpvp.ui.view.RegisterScreen
+import com.hendra.alpvp.ui.view.SleepScreen
+import com.hendra.alpvp.ui.view.TodoScreen
 
 @Composable
 fun MomentumApp() {
     val navController = rememberNavController()
     val context = LocalContext.current
 
-    // Cek Token
+    // --- 1. LOGIKA CEK TOKEN (Menentukan Halaman Awal) ---
     val token = remember { TokenManager.getToken(context) }
     val startDestination = if (token != null) "home" else "login"
 
-    // Izin Notifikasi
+    // --- 2. LOGIKA IZIN NOTIFIKASI (Android 13+) ---
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
-
         onResult = { isGranted ->
             if (!isGranted) {
                 Toast.makeText(context, "Notifikasi dimatikan, alarm mungkin tidak muncul!", Toast.LENGTH_LONG).show()
@@ -50,8 +50,9 @@ fun MomentumApp() {
         }
     }
 
-    // Navigasi Utama
+    // --- 3. NAVIGASI UTAMA ---
     NavHost(navController = navController, startDestination = startDestination) {
+
         composable("login") {
             LoginScreen(
                 onLoginSuccess = {
@@ -59,7 +60,6 @@ fun MomentumApp() {
                         popUpTo("login") { inclusive = true }
                     }
                 },
-
                 onNavigateToRegister = {
                     navController.navigate("register")
                 }
@@ -89,13 +89,14 @@ fun MomentumApp() {
         composable("finance") {
             FinanceScreen(onBackClick = { navController.popBackStack() })
         }
-
         composable("todo") {
             TodoScreen(onBackClick = { navController.popBackStack() })
         }
-
         composable("sleep") {
             SleepScreen(onBackClick = { navController.popBackStack() })
+        }
+        composable("calendar") {
+            CalendarView(onBackClick = { navController.popBackStack() })
         }
     }
 }

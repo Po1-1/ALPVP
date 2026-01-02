@@ -1,6 +1,10 @@
 package com.hendra.alpvp.ui.view
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -44,6 +48,9 @@ fun DashboardScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             DashboardButton("Alarm") { onNavigate("sleep") }
+            Spacer(modifier = Modifier.height(16.dp))
+
+            DashboardButton("Calendar") { onNavigate("calendar") }
 
             Spacer(modifier = Modifier.height(48.dp))
 
@@ -63,7 +70,7 @@ fun DashboardButton(text: String, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .height(60.dp),
-        shape = RoundedCornerShape(12.dp),
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2C2C2E))
     ) {
         Box(

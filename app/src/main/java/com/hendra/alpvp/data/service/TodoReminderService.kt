@@ -1,4 +1,4 @@
-package com.hendra.newalpvp.data.service
+package com.hendra.alpvp.data.service
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -11,6 +11,10 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.hendra.alpvp.R
 import kotlinx.coroutines.*
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import kotlin.apply
+import kotlin.jvm.java
 
 class TodoReminderService : Service() {
 
@@ -20,14 +24,16 @@ class TodoReminderService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val todoTitle = intent?.getStringExtra("TODO_TITLE") ?: "Waktunya mengerjakan tugas!"
 
+        // 1. Tampilkan Notifikasi agar service berjalan (Foreground Service)
         showNotification(todoTitle)
 
+        // 2. Jalankan logika bunyi 3 kali di background
         serviceScope.launch {
-            repeat(3) {
+            repeat(3) { // Bunyi 3 kali
                 playSound()
-                delay(3000)
+                delay(3000) // Jeda 3 detik
             }
-            stopSelf()
+            stopSelf() // Matikan service otomatis setelah selesai
         }
 
         return START_NOT_STICKY
