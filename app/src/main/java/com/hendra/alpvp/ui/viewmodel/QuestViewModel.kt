@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
 import com.hendra.alpvp.MomentumApplication
 import com.hendra.alpvp.data.repository.WeatherRepository
 import kotlinx.coroutines.delay
@@ -14,6 +15,8 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import kotlin.collections.firstOrNull
+import kotlin.onSuccess
 import kotlin.random.Random
 
 // State untuk UI
@@ -104,7 +107,8 @@ class QuestViewModel(private val repository: WeatherRepository) : ViewModel() {
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                val app = (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as MomentumApplication)
+                val app =
+                    (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as MomentumApplication)
                 QuestViewModel(app.container.weatherRepository)
             }
         }

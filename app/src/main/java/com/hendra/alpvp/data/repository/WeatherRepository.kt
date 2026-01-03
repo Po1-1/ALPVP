@@ -5,6 +5,7 @@ import com.hendra.alpvp.ui.model.WeatherResponse
 
 class WeatherRepository(private val api: ApiService) {
 
+
     private val API_KEY = "f2f8807fdad87323534d6b7cfe3cc696"
 
     suspend fun getWeather(lat: Double, lon: Double): Result<WeatherResponse> {

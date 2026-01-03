@@ -4,6 +4,7 @@ import com.hendra.alpvp.ui.model.WebResponse
 import com.hendra.alpvp.ui.model.*
 import retrofit2.Response
 import retrofit2.http.*
+import retrofit2.http.Body
 
 interface ApiService {
     // --- AUTH ---
@@ -19,6 +20,19 @@ interface ApiService {
 
     @GET("api/finance")
     suspend fun getTransactions(): Response<WebResponse<List<TransactionResponse>>>
+
+    // --- TODO ---
+    @GET("api/todos")
+    suspend fun getTodos(): Response<WebResponse<List<TodoResponse>>>
+
+    @POST("api/todos")
+    suspend fun createTodo(@Body request: TodoRequest): Response<WebResponse<TodoResponse>>
+
+    @PATCH("api/todos/{id}/toggle")
+    suspend fun toggleTodo(@Path("id") id: String): Response<WebResponse<TodoResponse>>
+
+    @DELETE("api/todos/{id}")
+    suspend fun deleteTodo(@Path("id") id: String): Response<WebResponse<Any>>
 
     // --- ALARM (SLEEP) ---
     @GET("api/alarms")
@@ -37,4 +51,32 @@ interface ApiService {
     suspend fun getCurrentWeather(
         @Url url: String
     ): Response<WeatherResponse>
+    //EVENT
+
+    @GET("api/event")
+    suspend fun getAllEvents(): Response<WebResponse<List<EventResponse>>>
+
+    @GET("api/event/{id}")
+    suspend fun getEvent(
+        @Path("id") id: Int
+    ): Response<WebResponse<EventResponse>>
+
+    @POST("api/event")
+    suspend fun createEvent(
+        @Body request: EventRequest
+    ): Response<WebResponse<EventResponse>>
+
+    @PUT("api/event/{event_id}")
+    suspend fun updateEvent(
+        @Path("event_id") eventId: Int,
+        @Body request: EventRequest
+    ): Response<WebResponse<EventResponse>>
+
+    @DELETE("api/event/{event_id}")
+    suspend fun deleteEvent(
+        @Path("event_id") eventId: Int
+    ): Response<WebResponse<String>>
+
+
+
 }
