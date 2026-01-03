@@ -13,7 +13,7 @@ interface ApiService {
     @POST("api/users/login")
     suspend fun login(@Body request: LoginRequest): Response<WebResponse<UserResponse>>
 
-    // FINANCE
+    // --- FINANCE ---
     @POST("api/finance")
     suspend fun createTransaction(@Body request: TransactionRequest): Response<WebResponse<TransactionResponse>>
 

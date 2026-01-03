@@ -9,7 +9,9 @@ import com.hendra.alpvp.MomentumApplication
 import com.hendra.alpvp.data.repository.FinanceRepository
 import com.hendra.alpvp.ui.model.FinanceUiState
 import com.hendra.alpvp.ui.model.TransactionRequest
+import com.hendra.alpvp.ui.model.TransactionResponse
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -21,7 +23,6 @@ import java.util.Locale
 class FinanceViewModel(private val repository: FinanceRepository) : ViewModel() {
     private val _uiState = MutableStateFlow(FinanceUiState())
     val uiState = _uiState.asStateFlow()
-
     fun loadData() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }

@@ -26,7 +26,6 @@ class SleepViewModel(private val repository: SleepRepository) : ViewModel() {
 
     private val _alarms = MutableStateFlow<List<AlarmResponse>>(emptyList())
     val alarms = _alarms.asStateFlow()
-
     fun loadData() {
         viewModelScope.launch {
             repository.getAlarms().onSuccess { response ->
@@ -81,6 +80,7 @@ class SleepViewModel(private val repository: SleepRepository) : ViewModel() {
         }
     }
 
+    // --- LOGIKA ALARM MANAGER DENGAN HARI ---
     private fun scheduleSystemAlarm(context: Context, hour: Int, minute: Int, days: List<Boolean>, requestCode: Int) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -91,7 +91,8 @@ class SleepViewModel(private val repository: SleepRepository) : ViewModel() {
             }
         }
 
-        val triggerTime = calculateNextAlarmTime(hour, minute, days) // Hitung kapan alarm bunyi
+        // Hitung kapan alarm harus bunyi berikutnya
+        val triggerTime = calculateNextAlarmTime(hour, minute, days)
 
         val intent = Intent(context, AlarmReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
@@ -107,9 +108,9 @@ class SleepViewModel(private val repository: SleepRepository) : ViewModel() {
             } else {
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
             }
-            Log.d("SleepViewModel", "Alarm dijadwalkan: ${java.util.Date(triggerTime)}")
+            Log.d("SleepViewModel", "Alarm dijadwalkan pada: ${java.util.Date(triggerTime)}")
         } catch (e: Exception) {
-            Log.e("SleepViewModel", "Gagal Jadwal: ${e.message}")
+            Log.e("SleepViewModel", "Gagal Jadwal Alarm: ${e.message}")
         }
     }
 
@@ -117,15 +118,16 @@ class SleepViewModel(private val repository: SleepRepository) : ViewModel() {
         try {
             val intent = Intent(context, AlarmReceiver::class.java)
             val pendingIntent = PendingIntent.getBroadcast(
-                context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE /
+                context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
             val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             am.cancel(pendingIntent)
         } catch (e: Exception) {
-            Log.e("SleepViewModel", "Gagal Batal: ${e.message}")
+            Log.e("SleepViewModel", "Gagal Batal Alarm: ${e.message}")
         }
     }
 
+    // Helper: Hitung waktu alarm
     private fun calculateNextAlarmTime(hour: Int, minute: Int, days: List<Boolean>): Long {
         val now = Calendar.getInstance()
         val target = Calendar.getInstance().apply {
@@ -135,26 +137,40 @@ class SleepViewModel(private val repository: SleepRepository) : ViewModel() {
             set(Calendar.MILLISECOND, 0)
         }
 
+        // Apakah ada hari yang dipilih? (Berulang)
         val isRepeat = days.contains(true)
 
         if (!isRepeat) {
+            // KASUS 1: SEKALI JALAN
+            // Jika waktu sudah lewat hari ini, jadwalkan untuk besok
             if (target.before(now)) {
                 target.add(Calendar.DAY_OF_YEAR, 1)
             }
             return target.timeInMillis
         } else {
-            val currentDayOfWeek = now.get(Calendar.DAY_OF_WEEK)
+            // KASUS 2: BERULANG HARI TERTENTU
+            // Calendar.DAY_OF_WEEK: Minggu=1 ... Sabtu=7
+            // Kita asumsikan List `days` dimulai dari Minggu [0] s/d Sabtu [6]
+
+            val currentDayOfWeek = now.get(Calendar.DAY_OF_WEEK) // 1..7
+
+            // Loop cek 7 hari ke depan
             for (i in 0..7) {
+                // Index hari yang dicek (0..6)
                 val checkIndex = (currentDayOfWeek + i - 1) % 7
-                // Pastikan akses array aman
-                if (checkIndex < days.size && days[checkIndex]) {
+
+                if (days[checkIndex]) {
+                    // Jika hari ini (i=0) aktif, cek apakah jamnya sudah lewat?
                     if (i == 0 && target.before(now)) {
-                        continue
+                        continue // Lewat, cari hari berikutnya
                     }
+
+                    // Ketemu hari yang pas! Tambahkan i hari dari sekarang
                     target.add(Calendar.DAY_OF_YEAR, i)
                     return target.timeInMillis
                 }
             }
+            // Fallback (Seharusnya tidak pernah sampai sini jika logic benar)
             return target.timeInMillis
         }
     }
