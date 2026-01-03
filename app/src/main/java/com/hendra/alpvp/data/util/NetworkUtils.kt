@@ -1,4 +1,4 @@
-package com.hendra.newalpvp.data.util
+package com.hendra.alpvp.data.util
 
 import org.json.JSONObject
 import retrofit2.Response

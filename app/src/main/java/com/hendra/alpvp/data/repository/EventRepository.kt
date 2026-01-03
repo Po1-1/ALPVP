@@ -1,8 +1,8 @@
 package com.hendra.alpvp.data.repository;
 
 import com.hendra.alpvp.data.service.ApiService;
-import com.hendra.alpvp.data.util.safeApiCall
 import com.hendra.alpvp.ui.model.EventRequest
+import com.hendra.alpvp.data.util.safeApiCall
 
 class EventRepository (private val api: ApiService) {
     suspend fun getAllEvents() = safeApiCall { api.getAllEvents() }

@@ -1,4 +1,4 @@
-package com.hendra.newalpvp.ui.view
+package com.hendra.alpvp.ui.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
